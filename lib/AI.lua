@@ -96,6 +96,7 @@ function AI:Main()
     return true
 end
 
+---@return Layer
 function AI:GetOutput()
     return self.layers[#self.layers]
 end

@@ -54,6 +54,16 @@ function map:act()
     end
 end
 
+function map:heap()
+    local heap = {}
+    for x = 0, self.width do
+        for y = 0, self.height do
+            local alpha = self[x][y]
+            table.insert(heap, alpha)
+        end
+    end
+end
+
 map:init()
 
 return map
