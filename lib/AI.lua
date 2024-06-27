@@ -10,6 +10,7 @@
 local AI = {
     layers = {},
     setuped = false,
+    step = 2, -- ignore input layer
 }
 
 ---@param value number
@@ -91,7 +92,13 @@ function AI:Main()
         return
     end
 
+    while true do
+        local current_layer = AI.layers[AI.step]
 
+        -- мне лень
+
+        AI.step = AI.step + 1
+    end
 
     return true
 end
