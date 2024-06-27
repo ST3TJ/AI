@@ -1,0 +1,1 @@
+window = { love.graphics.getDimensions() }

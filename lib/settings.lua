@@ -1,0 +1,2 @@
+BRUSH_SIZE = 3
+SCALE = 30
