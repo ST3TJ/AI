@@ -62,6 +62,7 @@ function map:heap()
             table.insert(heap, alpha)
         end
     end
+    return heap
 end
 
 map:init()
