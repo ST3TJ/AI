@@ -1,14 +1,27 @@
 ---@class Neuron
 ---@field weights number[]
 ---@field bias number
+---@field value number
+
+---@class Layer
+---@field GetValues fun(self: Layer): number[] Return value of neurons containing in layer
+---@field neurons Neuron[]
 
 local AI = {
     layers = {},
     setuped = false,
 }
 
+---@param value number
+---@return number
 function AI:Activate(value)
     return math.max(0, value)
+end
+
+---@param id integer
+---@return Layer
+function AI:GetLayer(id)
+    return self.layers[id]
 end
 
 ---@param connections_amount number
@@ -17,12 +30,12 @@ end
 function AI:CreateNeuron(connections_amount, randomize)
     local neuron = {
         weights = {},
-        bias = randomize and math.random(-1, 1) or 0,
+        bias = randomize and (math.random() - math.random()) or 0,
         value = 0
     }
 
     for i = 1, connections_amount do
-        neuron.weights[i] = randomize and math.random(-1, 1) or 0
+        neuron.weights[i] = randomize and (math.random() - math.random()) or 0
     end
 
     neuron.value = neuron.bias
@@ -32,21 +45,33 @@ end
 
 ---@param data table
 function AI:AddInputLayer(data)
-    self.layers[1] = {}
+    self.layers[1] = {
+        neurons = {}
+    }
 
     for i = 1, #data do
-        self.layers[1][i] = data[i]
+        table.insert(self.layers[1].neurons, { value = data[i] })
     end
 end
 
 ---@param size number
 function AI:AddLayer(size)
-    table.insert(self.layers, {})
-    local id = #self.layers
-    local connections_amount = #self.layers[id - 1]
+    table.insert(self.layers, {
+        GetValues = function(self)
+            local values = {}
+            for _, neuron in ipairs(self.neurons) do
+                table.insert(values, neuron.value)
+            end
+            return values
+        end,
+        neurons = {},
+    })
 
-    for _ = 1, #size do
-        table.insert(self.layers[id], self:CreateNeuron(connections_amount, true))
+    local id = #self.layers
+    local connections_amount = #self:GetLayer(id - 1).neurons -- Amount of neurons on previous layer
+
+    for _ = 1, size do
+        table.insert(self:GetLayer(id).neurons, self:CreateNeuron(connections_amount, true))
     end
 end
 
@@ -66,7 +91,7 @@ function AI:Main()
         return
     end
 
-    
+
 
     return true
 end

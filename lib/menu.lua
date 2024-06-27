@@ -6,7 +6,8 @@ menu.main = function()
     if action == '1' then
         AI:Setup({1, 0, 1, 0.5}, 3, { 192, 48, 10 })
         AI:Main()
-        print(unpack(AI:GetOutput()))
+        local output = AI:GetOutput()
+        print(unpack(output:GetValues()))
     elseif action == '2' then
         love.event.quit()
     end
