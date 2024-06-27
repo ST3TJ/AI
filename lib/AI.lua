@@ -55,7 +55,7 @@ end
 ---@param layers_sizes number[]
 function AI:Setup(data, layers_amount, layers_sizes)
     self:AddInputLayer(data)
-    for i = 1, #layers_amount do
+    for i = 1, layers_amount do
         self:AddLayer(layers_sizes[i])
     end
     self.setuped = true
