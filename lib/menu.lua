@@ -18,12 +18,15 @@ menu.actions = {
         map:init()
     end,
     function()
+        AI:Reset()
+    end,
+    function()
         love.event.quit()
     end
 }
 
 menu.main = function()
-    printf('Menu actions\n1. Activate AI\n2. Clear canvas\n3. Exit')
+    printf('Menu actions\n1. Activate AI\n2. Clear canvas\n3. Reset AI\n4. Exit')
     local action = io.read()
     menu.actions[tonumber(action)]()
     in_menu = false

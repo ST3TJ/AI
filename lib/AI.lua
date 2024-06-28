@@ -8,6 +8,7 @@
 ---@field neurons Neuron[]
 
 local AI = {
+    ---@type Layer[]
     layers = {},
     setuped = false,
     step = 2, -- ignore input layer
@@ -76,10 +77,19 @@ function AI:AddLayer(size)
     end
 end
 
+function AI:Reset()
+    self.layers = {}
+    self.setuped = false
+    self.step = 2
+end
+
 ---@param data any
 ---@param layers_amount number
 ---@param layers_sizes number[]
 function AI:Setup(data, layers_amount, layers_sizes)
+    if self.setuped then
+        return
+    end
     self:AddInputLayer(data)
     for i = 1, layers_amount do
         self:AddLayer(layers_sizes[i])
@@ -93,12 +103,24 @@ function AI:Main()
     end
 
     while true do
-        local current_layer = AI.layers[AI.step]
+        local previous_layer = self.layers[self.step - 1]
+        local current_layer = self.layers[self.step]
 
-        -- мне лень
+        for _, neuron in ipairs(current_layer.neurons) do
+            for i, weight in ipairs(neuron.weights) do
+                neuron.value = neuron.value + previous_layer.neurons[i].value * weight
+            end
+            neuron.value = self:Activate(neuron.value)
+        end
 
-        AI.step = AI.step + 1
+        self.step = self.step + 1
+
+        if self.step > #self.layers then
+            break
+        end
     end
+
+    self.step = 2
 
     return true
 end
