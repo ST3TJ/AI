@@ -27,14 +27,21 @@ menu.actions = {
         AI:Reset()
     end,
     function()
+    end,
+    function()
         love.event.quit()
     end
 }
 
 menu.main = function()
-    printf('Menu actions\n1. Activate AI\n2. Clear canvas\n3. Reset AI\n4. Exit')
-    local action = io.read()
-    menu.actions[tonumber(action)]()
+    printf('Menu actions\n1. Activate AI\n2. Clear canvas\n3. Reset AI\n4. Continue\n5. Exit')
+    local choose = io.read()
+    local action = menu.actions[tonumber(choose)]
+    if not action then
+        printf('Action with index %s does not exists', choose)
+        return
+    end
+    action()
     in_menu = false
 end
 

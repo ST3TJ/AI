@@ -14,10 +14,11 @@ local AI = {
     step = 2, -- ignore input layer
 }
 
----@param value number
+---@param x number
 ---@return number
-function AI:Activate(value)
-    return math.max(0, value)
+function AI:Activate(x)
+    -- math.max(0, value)
+    return 1 / (1 + math.exp(-x))
 end
 
 ---@param id integer
