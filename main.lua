@@ -1,7 +1,9 @@
 require('header')
 
 function love.draw()
-    input.get()
+    if love.keyboard.isDown(ESCAPE_BUTTON) then
+        in_menu = true
+    end
 
     if not in_menu then
         map:act()
