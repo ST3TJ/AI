@@ -1,9 +1,12 @@
 local menu = {}
 
 menu.actions = {
+    ---@param throw? boolean
     ---@return number|nil
-    function(output)
-        output = output or true
+    function(throw)
+        if type(throw) == 'nil' then
+            throw = true
+        end
         local data = map:heap()
         AI:Setup(data, 3, { 192, 48, 10 })
         AI:Main()
@@ -19,7 +22,7 @@ menu.actions = {
                 return string.format('\n%s: %.2f', k - 1, v)
             end
         )
-        if output then
+        if throw then
             ---@cast values string[]
             print(unpack(values))
             printf('Final guess: %s', guess.digit)
@@ -39,9 +42,10 @@ menu.actions = {
             local guess = menu.actions[1](false)
 
             if real_digit ~= guess then
-                printf('Real number: %s, guessed: %s', real_digit, guess)
+                printf('Real: %s | Guessed: %s', real_digit, guess)
                 AI:Reset()
             else
+                printf('Found!')
                 break
             end
         end
