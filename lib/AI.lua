@@ -48,6 +48,7 @@ end
 
 ---@param data table
 function AI:AddInputLayer(data)
+    ---@diagnostic disable-next-line: missing-fields
     self.layers[1] = {
         neurons = {}
     }
