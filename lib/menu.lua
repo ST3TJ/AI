@@ -5,14 +5,20 @@ menu.actions = {
         local data = map:heap()
         AI:Setup(data, 3, { 192, 48, 10 })
         AI:Main()
+        local guess = { value = 0, digit = nil }
         local output = AI:GetOutput()
         local values = table.foreach(
             output:GetValues(),
             function(k, v)
+                if v > guess.value then
+                    guess.value = v
+                    guess.digit = k - 1
+                end
                 return string.format('\n%s: %.2f', k - 1, v)
             end
         )
         print(unpack(values))
+        printf('Final guess: %s', guess.digit)
     end,
     function()
         map:init()
