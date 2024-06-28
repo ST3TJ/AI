@@ -17,6 +17,7 @@ menu.actions = {
                 return string.format('\n%s: %.2f', k - 1, v)
             end
         )
+        ---@cast values string[]
         print(unpack(values))
         printf('Final guess: %s', guess.digit)
     end,
