@@ -199,8 +199,8 @@ function AI:Main()
 
     -- Forward pass through the remaining layers
     for step = 2, #AI.layers do
-        local previous_layer = AI.layers[step - 1]
-        local current_layer = AI.layers[step]
+        local previous_layer = AI:GetLayer(step - 1)
+        local current_layer = AI:GetLayer(step)
 
         for _, neuron in ipairs(current_layer.neurons) do
             neuron.value = neuron.bias

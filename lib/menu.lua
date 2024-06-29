@@ -6,16 +6,15 @@ menu.actions = {
     function(throw)
         throw = throw == nil and true or throw
 
+        --[[
+            @ если сетапить руками, то оно логично ломается если не ресетать значения
+            @ при этом если их ресетать, то оно все равно ломается
+            @ если сетапить через :Setup, то оно работает в любом случае
+            @ колдовство ебучее
+        ]]
         local data = map:heap()
-        -- local layers = { 256, 128, 10 }
-        -- AI:Setup(data, #layers, layers)
-
-        AI:AddInputLayer(data)
-        AI:AddLayer(256, 'relu')
-        AI:AddLayer(128, 'relu')
-        AI:AddLayer(10)
-        AI.setuped = true
-
+        local layers = { 256, 128, 10 }
+        AI:Setup(data, #layers, layers)
         AI:Main()
 
         local guess = { value = 0, digit = nil }
