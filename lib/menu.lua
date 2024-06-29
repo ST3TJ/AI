@@ -6,12 +6,6 @@ menu.actions = {
     function(throw)
         throw = throw == nil and true or throw
 
-        --[[
-            @ если сетапить руками, то оно логично ломается если не ресетать значения
-            @ при этом если их ресетать, то оно все равно ломается
-            @ если сетапить через :Setup, то оно работает в любом случае
-            @ колдовство ебучее
-        ]]
         local data = map:heap()
         local layers = { 256, 128, 10 }
         AI:Setup(data, #layers, layers)
@@ -21,8 +15,6 @@ menu.actions = {
         local output = AI:GetOutput()
         local values = output:GetValues()
         local formatted_values = {}
-
-        AI:ResetValues()
 
         for k, v in ipairs(values) do
             if v > guess.value then

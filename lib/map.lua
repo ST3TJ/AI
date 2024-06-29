@@ -52,6 +52,7 @@ function map:act()
     end
 end
 
+---@return number[]
 function map:heap()
     local heap = {}
     for x = 0, self.width do

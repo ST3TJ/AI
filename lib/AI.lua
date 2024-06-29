@@ -35,6 +35,11 @@ function AI:GetLayer(id)
     return AI.layers[id]
 end
 
+---@return number
+function AI:Random()
+    return math.random() - math.random()
+end
+
 ---@param connections_amount number
 ---@param randomize? boolean
 ---@param method? string
@@ -42,13 +47,13 @@ end
 function AI:CreateNeuron(connections_amount, randomize, method)
     local neuron = {
         weights = {},
-        bias = randomize and (math.random() * 2 - 1) or 0,
+        bias = randomize and AI:Random() or 0,
         value = 0,
         method = method,
     }
 
     for i = 1, connections_amount do
-        neuron.weights[i] = randomize and (math.random() * 2 - 1) or 0
+        neuron.weights[i] = randomize and AI:Random() or 0
     end
 
     return neuron
@@ -57,6 +62,7 @@ end
 ---@return Layer
 function AI:CreateBaseLayer()
     return {
+        ---@param self Layer
         GetValues = function(self)
             local values = {}
             for _, neuron in ipairs(self.neurons) do
@@ -64,6 +70,7 @@ function AI:CreateBaseLayer()
             end
             return values
         end,
+        ---@param self Layer
         ResetValues = function(self)
             for _, neuron in ipairs(self.neurons) do
                 neuron.value = 0
@@ -207,7 +214,7 @@ function AI:Main()
             for i, weight in ipairs(neuron.weights) do
                 neuron.value = neuron.value + previous_layer.neurons[i].value * weight
             end
-            neuron.value = AI:Activate(neuron.value)
+            neuron.value = AI:Activate(neuron.value, neuron.method)
         end
     end
 
