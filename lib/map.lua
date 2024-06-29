@@ -4,9 +4,7 @@ function map:init()
     self.width = math.floor(window[1] / SCALE)
     self.height = math.floor(window[2] / SCALE)
     for x = 0, self.width do
-        if not self[x] then
-            self[x] = {}
-        end
+        self[x] = {}
         for y = 0, self.height do
             self[x][y] = 0
         end
