@@ -165,6 +165,8 @@ function AI:Main()
     end
 
     --[[
+    Eto prosto pizda kakayto 😢
+
     local filters = {
         {
             {1, 0, -1},
