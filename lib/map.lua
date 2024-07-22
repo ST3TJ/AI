@@ -22,6 +22,19 @@ function map:draw()
             end
         end
     end
+
+    if not (DRAW_NETWORK and AI.setuped) then
+        return
+    end
+    
+    AI:AddInputLayer(map:heap())
+    AI:Main()
+    for x, layer in pairs(AI.layers) do
+        for y, value in pairs(layer:GetValues()) do
+            love.graphics.setColor(value, value, value)
+            love.graphics.circle('fill', x * 10, y * 10, 5)
+        end
+    end
 end
 
 function map:act()

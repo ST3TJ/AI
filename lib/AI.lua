@@ -47,13 +47,13 @@ end
 function AI:CreateNeuron(connections_amount, randomize, method)
     local neuron = {
         weights = {},
-        bias = randomize and AI:Random() or 0,
+        bias = randomize and AI:Random() * 2 or 0,
         value = 0,
         method = method,
     }
 
     for i = 1, connections_amount do
-        neuron.weights[i] = randomize and AI:Random() or 0
+        neuron.weights[i] = randomize and AI:Random() * 2 or 0
     end
 
     return neuron
@@ -85,7 +85,7 @@ function AI:AddInputLayer(data)
     AI.layers[1] = AI:CreateBaseLayer()
 
     for i = 1, #data do
-        table.insert(AI.layers[1].neurons, { value = data[i], weights = {}, bias = 0 })
+        table.insert(AI.layers[1].neurons, { value = data[i], weights = {}, bias = data[i] })
     end
 end
 
