@@ -1,7 +1,7 @@
 require('header')
 
 function love.draw()
-    if love.keyboard.isDown(ESCAPE_BUTTON) then
+    if engine.get_key_state(ESCAPE_BUTTON) ~= 0 then
         in_menu = true
     end
 

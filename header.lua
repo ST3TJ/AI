@@ -1,5 +1,6 @@
 require('lib.settings')
 require('lib.global')
+engine = require('lib.engine')
 map = require('lib.map')
 AI = require('lib.AI')
 menu = require('lib.menu')

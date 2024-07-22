@@ -64,6 +64,22 @@ function map:heap()
     return heap
 end
 
+---@return string
+function map:dump()
+    local dump = 'return {\n';
+
+    for x = 0, #map do
+        for y = 0, #map[x] do
+            dump = string.format('%s%.2f,', dump, map[x][y])
+        end
+        dump = dump .. '\n'
+    end
+
+    dump = dump .. '\n}'
+
+    return dump
+end
+
 map:init()
 
 return map

@@ -1,4 +1,14 @@
 local menu = {}
+local text = [[
+Menu actions
+  1. Activate AI
+  2. Reset AI
+  3. Clear canvas
+  4. Auto Train
+  5. Dump number
+  6. Continue
+  7. Exit
+]]
 
 menu.actions = {
     ---@param throw? boolean
@@ -7,7 +17,7 @@ menu.actions = {
         throw = throw == nil and true or throw
 
         local data = map:heap()
-        local layers = { 256, 128, 10 }
+        local layers = { 16, 16, 10 }
         AI:Setup(data, #layers, layers)
         AI:Main()
 
@@ -30,15 +40,15 @@ menu.actions = {
         end
 
         return guess.digit
-    end,
+    end, -- Activate AI
 
     function()
         AI:Reset()
-    end,
+    end, -- Reset AI
 
     function()
         map:init()
-    end,
+    end, -- Clear canvas
 
     function()
         local real_digit = tonumber(input('Write a number that you drew:'))
@@ -53,19 +63,38 @@ menu.actions = {
                 break
             end
         end
-    end,
+    end, -- Auto train
 
     function()
-        -- Reserved for future use
-    end,
+        local digit = input("Enter digit that you drew: ")
+        local directory = string.format("dataset/%d", digit)
+
+        local fileCount = engine.count_files_in_dir(directory)
+
+        local path = string.format("%s/%d.lua", directory, fileCount + 1)
+        local dump = map:dump()
+
+        local file = io.open(path, "w")
+        if file then
+            file:write(dump)
+            file:close()
+            print("The file was successfully created by the path: " .. path)
+        else
+            print("Failed to create a file by the path: " .. path)
+        end
+    end, -- Dump number
+
+    function()
+        -- 1488
+    end, -- Continue
 
     function()
         love.event.quit()
-    end
+    end -- Exit
 }
 
 menu.main = function()
-    printf('Menu actions\n1. Activate AI\n2. Reset AI\n3. Clear canvas\n4. Auto Train\n5. Continue\n6. Exit')
+    printf(text)
     local choice = tonumber(io.read())
 
     local action = menu.actions[choice]

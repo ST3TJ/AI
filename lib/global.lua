@@ -1,3 +1,4 @@
+math.randomseed(os.time())
 window = { love.graphics.getDimensions() }
 in_menu = false
 
