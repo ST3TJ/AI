@@ -17,7 +17,7 @@ menu.actions = {
         throw = throw == nil and true or throw
 
         local data = map:heap()
-        local layers = { 16, 16, 10 }
+        local layers = { 128, 64, 16, 10 }
         AI:Setup(data, #layers, layers)
         AI:Main()
 
