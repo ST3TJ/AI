@@ -16,6 +16,8 @@ menu.actions = {
     function(throw)
         throw = throw == nil and true or throw
 
+        -- TODO: Generate random index of dataset and calculate avg mistake automatically
+
         local data = map:heap()
         local layers = { 128, 64, 16, 10 }
         AI:setup(data, #layers, layers)
@@ -25,6 +27,17 @@ menu.actions = {
         local output = AI:getOutput()
         local values = output:getValues()
         local formatted_values = {}
+
+        -- DEV
+        local real = tonumber(input('Real number:'))
+        local real_tbl = {}
+
+        for i = 1, 10 do
+            real_tbl[i] = i == real and 1 or 0
+        end
+
+        AI:updateMistake(real_tbl, output)
+        print(AI:getAvgMistake())
 
         for k, v in ipairs(values) do
             if v > guess.value then
