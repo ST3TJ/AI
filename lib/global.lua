@@ -1,5 +1,6 @@
 math.randomseed(os.time())
 window = { love.graphics.getDimensions() }
+notImplemented = 'notImplemented'
 in_menu = false
 
 function printf(...)

@@ -18,12 +18,12 @@ menu.actions = {
 
         local data = map:heap()
         local layers = { 128, 64, 16, 10 }
-        AI:Setup(data, #layers, layers)
-        AI:Main()
+        AI:setup(data, #layers, layers)
+        AI:main()
 
         local guess = { value = 0, digit = nil }
-        local output = AI:GetOutput()
-        local values = output:GetValues()
+        local output = AI:getOutput()
+        local values = output:getValues()
         local formatted_values = {}
 
         for k, v in ipairs(values) do
@@ -43,7 +43,7 @@ menu.actions = {
     end, -- Activate AI
 
     function()
-        AI:Reset()
+        AI:reset()
     end, -- Reset AI
 
     function()
@@ -57,7 +57,7 @@ menu.actions = {
 
             if real_digit ~= guess then
                 printf('Real: %s | Guessed: %s', real_digit, guess)
-                AI:Reset()
+                AI:reset()
             else
                 printf('Found!')
                 break

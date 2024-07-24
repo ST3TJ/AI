@@ -27,10 +27,10 @@ function map:draw()
         return
     end
 
-    AI:AddInputLayer(map:heap())
-    AI:Main()
+    AI:addInputLayer(map:heap())
+    AI:main()
     for x, layer in pairs(AI.layers) do
-        for y, value in pairs(layer:GetValues()) do
+        for y, value in pairs(layer:getValues()) do
             love.graphics.setColor(value, value, value)
             love.graphics.circle('fill', x * 10, y * 10, 3)
         end

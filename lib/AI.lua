@@ -5,23 +5,24 @@
 ---@field method string
 
 ---@class Layer
----@field GetValues fun(self: Layer): number[] Return value of neurons containing in layer
----@field ResetValues fun(self: Layer) Reset values of neurons containing in layer
+---@field getValues fun(self: Layer): number[] Return value of neurons containing in layer
+---@field resetValues fun(self: Layer) Reset values of neurons containing in layer
 ---@field neurons Neuron[]
 
 local AI = {
     ---@type Layer[]
     layers = {},
+    mistake = { value = 0, div = 0 },
     setuped = false,
-    filter_size = 3,
+    filterSize = 3,
     stride = 1,
-    padding = 0
+    padding = 0,
 }
 
 ---@param x number
 ---@param method? string
 ---@return number
-function AI:Activate(x, method)
+function AI:activate(x, method)
     if method == 'relu' then
         return math.max(0, x)
     else
@@ -31,39 +32,39 @@ end
 
 ---@param id integer
 ---@return Layer
-function AI:GetLayer(id)
+function AI:getLayer(id)
     return AI.layers[id]
 end
 
 ---@return number
-function AI:Random()
-    return math.random() - math.random()
+function AI:random()
+    return ( math.random() - math.random() ) * 10
 end
 
----@param connections_amount number
+---@param connectionsAmount number
 ---@param randomize? boolean
 ---@param method? string
 ---@return Neuron
-function AI:CreateNeuron(connections_amount, randomize, method)
+function AI:createNeuron(connectionsAmount, randomize, method)
     local neuron = {
         weights = {},
-        bias = randomize and AI:Random() * 2 or 0,
+        bias = randomize and AI:random() or 0,
         value = 0,
-        method = method,
+        method = method or 'sigmoid'
     }
 
-    for i = 1, connections_amount do
-        neuron.weights[i] = randomize and AI:Random() * 2 or 0
+    for i = 1, connectionsAmount do
+        neuron.weights[i] = randomize and AI:random() or 0
     end
 
     return neuron
 end
 
 ---@return Layer
-function AI:CreateBaseLayer()
+function AI:createBaseLayer()
     return {
         ---@param self Layer
-        GetValues = function(self)
+        getValues = function(self)
             local values = {}
             for _, neuron in ipairs(self.neurons) do
                 table.insert(values, neuron.value)
@@ -71,7 +72,7 @@ function AI:CreateBaseLayer()
             return values
         end,
         ---@param self Layer
-        ResetValues = function(self)
+        resetValues = function(self)
             for _, neuron in ipairs(self.neurons) do
                 neuron.value = 0
             end
@@ -81,8 +82,8 @@ function AI:CreateBaseLayer()
 end
 
 ---@param data number[]
-function AI:AddInputLayer(data)
-    AI.layers[1] = AI:CreateBaseLayer()
+function AI:addInputLayer(data)
+    AI.layers[1] = AI:createBaseLayer()
 
     for i = 1, #data do
         table.insert(AI.layers[1].neurons, { value = data[i], weights = {}, bias = data[i] })
@@ -91,32 +92,32 @@ end
 
 ---@param size number
 ---@param method? string
-function AI:AddLayer(size, method)
-    local previous_layer_size = #AI:GetLayer(#AI.layers).neurons
+function AI:addLayer(size, method)
+    local previousLayerSize = #AI:getLayer(#AI.layers).neurons
 
-    table.insert(AI.layers, AI:CreateBaseLayer())
+    table.insert(AI.layers, AI:createBaseLayer())
 
     local id = #AI.layers
     for _ = 1, size do
-        table.insert(AI:GetLayer(id).neurons, AI:CreateNeuron(previous_layer_size, true, method))
+        table.insert(AI:getLayer(id).neurons, AI:createNeuron(previousLayerSize, true, method))
     end
 end
 
-function AI:Reset()
+function AI:reset()
     AI.layers = {}
     AI.setuped = false
 end
 
 ---@param data number[]
----@param layers_amount number
----@param layers_sizes number[]
-function AI:Setup(data, layers_amount, layers_sizes)
+---@param layersAmount number
+---@param layersSizes number[]
+function AI:setup(data, layersAmount, layersSizes)
     if AI.setuped then
         return
     end
-    AI:AddInputLayer(data)
-    for i = 1, layers_amount do
-        AI:AddLayer(layers_sizes[i])
+    AI:addInputLayer(data)
+    for i = 1, layersAmount do
+        AI:addLayer(layersSizes[i])
     end
     AI.setuped = true
 end
@@ -124,107 +125,89 @@ end
 ---@param input number[]
 ---@param filter number[]
 ---@return number[]
-function AI:ApplyFilter(input, filter)
-    local filter_size = AI.filter_size
+function AI:applyFilter(input, filter)
+    local filterSize = AI.filterSize
     local stride = AI.stride
     local padding = AI.padding
 
-    local input_size = #input
-    local output_size = math.floor((input_size - filter_size + 2 * padding) / stride + 1)
+    local inputSize = #input
+    local outputSize = math.floor((inputSize - filterSize + 2 * padding) / stride + 1)
     local output = {}
 
-    for i = 1, output_size do
+    for i = 1, outputSize do
         output[i] = {}
-        for j = 1, output_size do
+        for j = 1, outputSize do
             local sum = 0
-            for fi = 1, filter_size do
-                for fj = 1, filter_size do
-                    local input_x = (i - 1) * stride + fi
-                    local input_y = (j - 1) * stride + fj
-                    if input_x <= input_size and input_y <= input_size then
-                        sum = sum + input[input_x][input_y] * filter[fi][fj]
+            for fi = 1, filterSize do
+                for fj = 1, filterSize do
+                    local inputX = (i - 1) * stride + fi
+                    local inputY = (j - 1) * stride + fj
+                    if inputX <= inputSize and inputY <= inputSize then
+                        sum = sum + input[inputX][inputY] * filter[fi][fj]
                     end
                 end
             end
-            output[i][j] = AI:Activate(sum)
+            output[i][j] = AI:activate(sum)
         end
     end
 
     return output
 end
 
-function AI:ResetValues()
+function AI:resetValues()
     for step = 2, #AI.layers do
-        AI.layers[step]:ResetValues()
+        AI.layers[step]:resetValues()
     end
 end
 
-function AI:Main()
+function AI:main()
     if not AI.setuped then
         return
     end
 
-    --[[
-    Eto prosto pizda kakayto 😢
-
-    local filters = {
-        {
-            {1, 0, -1},
-            {1, 0, -1},
-            {1, 0, -1}
-        },
-        {
-            {1, 1, 1},
-            {0, 0, 0},
-            {-1, -1, -1}
-        }
-    }
-
-    local input_layer = AI:GetLayer(1)
-    local input_values = input_layer:GetValues()
-
-    local conv_output = {}
-    for _, filter in ipairs(filters) do
-        local result = AI:ApplyFilter(input_values, filter)
-        table.insert(conv_output, result)
-    end
-
-    -- Flatten convolution output and set as input to the next layer
-    local flat_conv_output = {}
-    for _, feature_map in ipairs(conv_output) do
-        for i = 1, #feature_map do
-            for j = 1, #feature_map[i] do
-                table.insert(flat_conv_output, feature_map[i][j])
-            end
-        end
-    end
-
-    -- Create a new input layer with the flattened convolution output
-    AI.layers[2] = AI:CreateBaseLayer()
-    for _, value in ipairs(flat_conv_output) do
-        table.insert(AI.layers[2].neurons, { value = value, weights = {}, bias = 0 })
-    end
-    ]]
-
     -- Forward pass through the remaining layers
     for step = 2, #AI.layers do
-        local previous_layer = AI:GetLayer(step - 1)
-        local current_layer = AI:GetLayer(step)
+        local previousLayer = AI:getLayer(step - 1)
+        local currentLayer = AI:getLayer(step)
 
-        for _, neuron in ipairs(current_layer.neurons) do
+        for _, neuron in ipairs(currentLayer.neurons) do
             neuron.value = neuron.bias
             for i, weight in ipairs(neuron.weights) do
-                neuron.value = neuron.value + previous_layer.neurons[i].value * weight
+                neuron.value = neuron.value + previousLayer.neurons[i].value * weight
             end
-            neuron.value = AI:Activate(neuron.value, neuron.method)
+            neuron.value = AI:activate(neuron.value, neuron.method)
         end
     end
 
     return true
 end
 
+---@param real number[]  -- Real values (for example, class labels)
+---@param suggest Layer  -- The output layer of the neural network
+function AI:updateMistake(real, suggest)
+    local sumError = 0
+    local values = suggest:getValues()
+
+    assert(#real == #values, "The length of real values and suggested values must match")
+
+    for i = 1, #real do
+        local error = real[i] - values[i]
+        sumError = sumError + error^2
+    end
+
+    AI.mistake.value = AI.mistake.value + sumError
+    AI.mistake.div = AI.mistake.div + 1
+end
+
+function AI:getAvgMistake()
+    if AI.mistake.div == 0 then
+        return 0
+    end
+    return AI.mistake.value / AI.mistake.div
+end
+
 ---@return Layer
-function AI:GetOutput()
+function AI:getOutput()
     return AI.layers[#AI.layers]
 end
 
